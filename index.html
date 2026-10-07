@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SCFHS Emergency Triage & Protocol Simulator</title>
+  <title>SCFHS Emergency Triage & Protocol Master (25 Core Cases)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -28,14 +28,14 @@
           <h1 class="text-lg font-bold bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
             SCFHS Triage & Protocol Master
           </h1>
-          <p class="text-xs text-slate-400">Prometric Emergency Nursing Simulation Lab</p>
+          <p class="text-xs text-slate-400">25 High-Yield Prometric Emergency Clinical Vignettes</p>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
       <nav class="flex items-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
         <button id="tab-game" onclick="switchTab('game')" class="px-4 py-2 rounded-lg bg-teal-600 text-white shadow-md flex items-center gap-2 transition-all">
-          🎮 Rapid Triage Game
+          🎮 Rapid Triage Game (25)
         </button>
         <button id="tab-matrix" onclick="switchTab('matrix')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition-all">
           📊 Protocol Matrix
@@ -96,7 +96,7 @@
           <span id="case-category" class="px-3 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold rounded-full uppercase tracking-wider">
             ESI Level 1 - Emergent
           </span>
-          <span id="case-counter" class="text-xs text-slate-400 mono">Case 1 of 3</span>
+          <span id="case-counter" class="text-xs text-slate-400 mono">Case 1 of 25</span>
         </div>
 
         <div class="mb-6">
@@ -116,9 +116,15 @@
       </div>
 
       <!-- START / RESET CONTROL -->
-      <div class="flex justify-end">
+      <div class="flex justify-between items-center">
+        <button onclick="prevQuestion()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all">
+          ⬅️ Previous Case
+        </button>
         <button onclick="resetGame()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl border border-slate-700 flex items-center gap-2 transition-all">
-          🔄 Restart Game Mode
+          🔄 Restart Simulation
+        </button>
+        <button onclick="skipQuestion()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all">
+          Next Case ➡️
         </button>
       </div>
 
@@ -135,10 +141,10 @@
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-          <button onclick="filterESI('ALL')" class="px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-semibold whitespace-nowrap">All ESI</button>
+          <button onclick="filterESI('ALL')" class="px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-semibold whitespace-nowrap">All ESI (25)</button>
           <button onclick="filterESI('ESI 1')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 1 (Emergent)</button>
           <button onclick="filterESI('ESI 2')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 2 (Urgent)</button>
-          <button onclick="filterESI('ESI 3')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 3 (Standard)</button>
+          <button onclick="filterESI('ESI 3')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 3 (Non-Emergent)</button>
         </div>
       </div>
 
@@ -150,7 +156,7 @@
               <tr>
                 <th class="px-4 py-3">#</th>
                 <th class="px-4 py-3">Case & Urgency</th>
-                <th class="px-4 py-3">Nursing Action</th>
+                <th class="px-4 py-3">Nursing Priority Action</th>
                 <th class="px-4 py-3">Medication & Route</th>
                 <th class="px-4 py-3">Dosage</th>
                 <th class="px-4 py-3">Time Rightness</th>
@@ -171,10 +177,10 @@
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
           <span class="text-xs font-bold text-teal-400 uppercase tracking-wider">SCFHS Board-Style Practice Exam</span>
-          <span id="vignette-number" class="text-xs text-slate-400 mono">Question 1 of 2</span>
+          <span id="vignette-number" class="text-xs text-slate-400 mono">Question 1 of 25</span>
         </div>
 
-        <h3 id="vignette-q-title" class="text-lg font-bold text-slate-100 mb-3">Anaphylactic Shock Management</h3>
+        <h3 id="vignette-q-title" class="text-lg font-bold text-slate-100 mb-3">Loading...</h3>
         <p id="vignette-q-text" class="text-sm text-slate-300 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-800 mb-6">
           Loading scenario...
         </p>
@@ -215,88 +221,581 @@
 
   <!-- JAVASCRIPT DATA & ENGINE -->
   <script>
-    // ================= DATA STORE =================
-    const protocols = [
-      { id: 1, case: "Anaphylactic Shock", esi: "ESI 1", action: "Maintain airway, non-rebreather O2 (10-15L), supine position with elevated legs.", drug: "Epinephrine (1:1,000)", dose: "0.3 - 0.5 mg IM", time: "STAT (Repeat q5-15m PRN)", rightness: "Anterolateral thigh IM immediately." },
-      { id: 2, case: "Acute STEMI", esi: "ESI 1", action: "12-lead ECG within 10 min, high-flow O2 if SpO2 <90%, PCI prep.", drug: "Chewable Aspirin + SL Nitroglycerin", dose: "Aspirin 160-325 mg PO / NTG 0.4 mg SL", time: "STAT at pain onset", rightness: "NTG q5m up to 3 doses max." },
-      { id: 3, case: "Severe Hypoglycemia", esi: "ESI 1", action: "Verify blood glucose <50 mg/dL, preserve airway, large bore IV.", drug: "Dextrose 50% in Water (D50W)", dose: "50 mL (25g) IV push", time: "STAT over 1-3 mins", rightness: "Recheck glucose in 15 minutes." },
-      { id: 4, case: "Status Epilepticus", esi: "ESI 1", action: "Airway preservation, side-lying position, suction ready, seizure precautions.", drug: "Lorazepam (Ativan)", dose: "4 mg IV slow push (2 mg/min)", time: "STAT over 2 mins", rightness: "May repeat once after 5-10 mins." },
-      { id: 5, case: "Hyperkalemia w/ EKG Changes", esi: "ESI 1", action: "Continuous ECG monitor, verify K+ >6.5 mEq/L, prepare hemodialysis.", drug: "Calcium Gluconate 10% + Regular Insulin", dose: "Calcium 10 mL IV / Insulin 10U with D50W", time: "STAT over 2-5 mins", rightness: "Calcium stabilizes membrane within 1-3 min." },
-      { id: 6, case: "Septic Shock", esi: "ESI 2", action: "Blood cultures prior to antibiotics, crystalloid 30 mL/kg, lactate measure.", drug: "Ceftriaxone (Broad-Spectrum)", dose: "1 - 2 g IV piggyback", time: "Within 1 Hour ('Golden Hour')", rightness: "Infuse over 30 mins after cultures." },
-      { id: 7, case: "Postpartum Hemorrhage", esi: "ESI 1", action: "Fundal massage, 2 large-bore IVs (16G), monitor vitals q5m, weigh pads.", drug: "Oxytocin (Syntocinon)", dose: "10-40 units in 1000 mL NS", time: "STAT continuous IV infusion", rightness: "Maintain rate until uterus contracts firm." },
-      { id: 8, case: "Deep Vein Thrombosis (DVT)", esi: "ESI 3", action: "Bed rest, elevate leg, no massage, monitor baseline aPTT/INR.", drug: "Unfractionated Heparin", dose: "80U/kg IV bolus -> 18U/kg/hr infusion", time: "STAT bolus, then continuous IV", rightness: "Adjust per aPTT protocol q6h." }
-    ];
-
-    const gameQuestions = [
+    // ================= 25 SCFHS CLINICAL CASES DATASTORE =================
+    const casesData = [
       {
+        id: 1,
         title: "Anaphylactic Shock",
-        vignette: "A 28-year-old female presents with acute stridor, widespread urticaria, and a BP of 78/42 mmHg following a wasp sting.",
-        esi: "ESI Level 1 - Emergent",
+        vignette: "A 28-year-old female presents with acute stridor, widespread urticaria, facial angioedema, and a BP of 78/42 mmHg following a wasp sting.",
+        esi: "ESI 1",
+        action: "Maintain airway, NRB mask 10-15L/min, elevate lower extremities.",
+        drug: "Epinephrine (1:1,000)",
+        dose: "0.3 - 0.5 mg IM",
+        time: "STAT (Repeat q5-15m PRN)",
+        rightness: "Anterolateral thigh IM immediately to reverse upper airway angioedema and vascular collapse.",
         options: [
-          { text: "Epinephrine 0.3mg IM (1:1,000) in thigh STAT", correct: true },
-          { text: "Diphenhydramine 25mg IV push STAT", correct: false },
+          { text: "Epinephrine 0.3mg IM (1:1,000) in anterolateral thigh STAT", correct: true },
+          { text: "Diphenhydramine 50mg IV push STAT", correct: false },
           { text: "Normal Saline 1000mL IV bolus over 1 hour", correct: false },
-          { text: "Albuterol 2.5mg nebulizer with oxygen", correct: false }
-        ],
-        explanation: "Epinephrine IM is the first-line drug for anaphylaxis to reverse airway obstruction and hypotension."
-      },
-      {
-        title: "Hyperkalemic Cardiac Toxicity",
-        vignette: "An ESRD patient has a potassium of 7.2 mEq/L with tall, peaked T-waves and widening QRS complexes on the monitor.",
-        esi: "ESI Level 1 - Emergent",
-        options: [
-          { text: "Calcium Gluconate 10% IV slow push STAT", correct: true },
-          { text: "Regular Insulin 10 units IV push STAT", correct: false },
-          { text: "Sodium Polystyrene (Kayexalate) 30g PO", correct: false },
-          { text: "Nebulized Albuterol 10mg over 15 mins", correct: false }
-        ],
-        explanation: "Calcium Gluconate immediately stabilizes the myocardial cell membrane to prevent lethal dysrhythmias."
-      },
-      {
-        title: "Unconscious Hypoglycemia",
-        vignette: "A diabetic patient is found unresponsive with a bedside glucose of 36 mg/dL. Peripheral IV is intact.",
-        esi: "ESI Level 1 - Emergent",
-        options: [
-          { text: "Dextrose 50% in Water (D50W) 50mL IV push", correct: true },
-          { text: "Oral Glucose Gel 15g between cheek and gums", correct: false },
-          { text: "Glucagon 1mg Subcutaneously", correct: false },
-          { text: "Recheck blood glucose with central laboratory sample", correct: false }
-        ],
-        explanation: "IV D50W is the fastest and safest route for severe hypoglycemia when IV access is present."
-      }
-    ];
-
-    const vignettes = [
-      {
-        title: "Question 1: Anaphylactic Shock Priority",
-        text: "A 28-year-old female is brought to the ED after a bee sting. Assessment reveals severe stridor, widespread urticaria, and BP 78/42 mmHg. Which action must be executed FIRST?",
-        options: [
-          { label: "A", text: "Administer Diphenhydramine 25mg IV push", correct: false },
-          { label: "B", text: "Administer Epinephrine 0.3mg (1:1,000) IM in anterolateral thigh", correct: true },
-          { label: "C", text: "Start Normal Saline 1000mL bolus over 30 mins", correct: false },
-          { label: "D", text: "Nebulize Albuterol 2.5mg with oxygen", correct: false }
+          { text: "Albuterol 2.5mg nebulizer with continuous O2", correct: false }
         ],
         rationale: [
-          { opt: "A", status: "Incorrect", text: "Diphenhydramine is 2nd-line adjunctive H1-blocker. Does not reverse laryngeal edema." },
-          { opt: "B", status: "CORRECT", text: "Epinephrine IM is 1st-line. Vasoconstricts, bronchodilates, and increases cardiac output." },
-          { opt: "C", status: "Incorrect", text: "Fluid resuscitation is secondary to Epinephrine administration." },
-          { opt: "D", status: "Incorrect", text: "Treats bronchospasm but does not reverse upper airway angioedema or systemic shock." }
+          { opt: "A", status: "CORRECT", text: "Epinephrine IM is 1st-line treatment. Alpha-1 vasoconstriction reverses hypotension; Beta-2 bronchodilates." },
+          { opt: "B", status: "Incorrect", text: "Diphenhydramine is a 2nd-line antihistamine. Does not reverse life-threatening airway edema." },
+          { opt: "C", status: "Incorrect", text: "Fluid resuscitation is secondary to epinephrine administration." },
+          { opt: "D", status: "Incorrect", text: "Treats bronchospasm but fails to reverse upper airway laryngeal edema." }
         ]
       },
       {
-        title: "Question 2: STEMI Reperfusion Window",
-        text: "A 54-year-old male presents with crushing substernal chest pain for 45 minutes with diaphoresis. Which action is the HIGHEST PRIORITY?",
+        id: 2,
+        title: "Acute Anterior STEMI",
+        vignette: "A 54-year-old male arrives with severe substernal crushing pain radiating to the left jaw for 45 minutes, diaphoresis, and SpO2 88%.",
+        esi: "ESI 1",
+        action: "Obtain 12-lead ECG within 10 min, apply O2, activate PCI catheter laboratory.",
+        drug: "Chewable Aspirin + SL Nitroglycerin",
+        dose: "Aspirin 325 mg PO / NTG 0.4 mg SL",
+        time: "STAT within 10 mins",
+        rightness: "ECG within 10 min establishes door-to-balloon reperfusion timer (<90 mins).",
         options: [
-          { label: "A", text: "Obtain a 12-lead ECG within 10 minutes", correct: true },
-          { label: "B", text: "Administer Morphine 2mg IV push", correct: false },
-          { label: "C", text: "Administer Sublingual Nitroglycerin 0.4mg", correct: false },
-          { label: "D", text: "Draw blood for Troponin I and T", correct: false }
+          { text: "Obtain 12-lead ECG within 10 min & administer Aspirin 325mg chewable", correct: true },
+          { text: "Administer Morphine 4mg IV push for pain relief", correct: false },
+          { text: "Administer Sublingual Nitroglycerin 0.4mg x 3 doses immediately", correct: false },
+          { text: "Send stat blood sample for Troponin I before interventions", correct: false }
         ],
         rationale: [
-          { opt: "A", status: "CORRECT", text: "12-lead ECG within 10 minutes confirms STEMI to activate door-to-balloon PCI protocol." },
-          { opt: "B", status: "Incorrect", text: "Morphine is reserved for pain refractory to nitrates." },
-          { opt: "C", status: "Incorrect", text: "Must confirm ECG first to rule out right ventricular infarction." },
-          { opt: "D", status: "Incorrect", text: "Troponin takes hours to elevate; must not delay ECG interpretation." }
+          { opt: "A", status: "CORRECT", text: "Diagnostic 12-lead ECG within 10 min is the primary target to activate emergency PCI." },
+          { opt: "B", status: "Incorrect", text: "Morphine is reserved for pain refractory to nitrates; increases mortality if given early." },
+          { opt: "C", status: "Incorrect", text: "Must rule out right ventricular infarction on 12-lead ECG before giving nitrates." },
+          { opt: "D", status: "Incorrect", text: "Laboratory troponins must never delay reperfusion protocols." }
+        ]
+      },
+      {
+        id: 3,
+        title: "Severe Symptomatic Hypoglycemia",
+        vignette: "A 42-year-old type 1 diabetic is found unresponsive, diaphoresis present, with a capillary blood glucose of 32 mg/dL. Peripheral IV is active.",
+        esi: "ESI 1",
+        action: "Maintain airway, patent IV, protect head, recheck glucose in 15 mins.",
+        drug: "Dextrose 50% in Water (D50W)",
+        dose: "50 mL (25g) IV push",
+        time: "STAT over 1-3 mins",
+        rightness: "Fastest parenteral route to restore neuroglycopenia when IV access is established.",
+        options: [
+          { text: "Dextrose 50% in Water (D50W) 50mL IV push STAT", correct: true },
+          { text: "Glucagon 1 mg Subcutaneously", correct: false },
+          { text: "Oral Glucose Gel 15g applied to buccal mucosa", correct: false },
+          { text: "Infuse Dextrose 5% in Water (D5W) at 125 mL/hr", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "IV D50W acts instantly to restore brain glucose levels when IV access exists." },
+          { opt: "B", status: "Incorrect", text: "Glucagon IM/SC is indicated only when IV access cannot be obtained." },
+          { opt: "C", status: "Incorrect", text: "Oral gels carry severe aspiration risk in unconscious patients." },
+          { opt: "D", status: "Incorrect", text: "D5W drip rate is too slow to treat acute hypoglycemic coma." }
+        ]
+      },
+      {
+        id: 4,
+        title: "Generalized Status Epilepticus",
+        vignette: "A 35-year-old male is actively experiencing continuous tonic-clonic seizure activity lasting 7 minutes without recovery of consciousness.",
+        esi: "ESI 1",
+        action: "Protect head, turn to lateral side, suction ready, do NOT insert anything in mouth.",
+        drug: "Lorazepam (Ativan)",
+        dose: "4 mg IV slow push (2 mg/min)",
+        time: "STAT over 2 mins",
+        rightness: "First-line GABA agonist to terminate continuous seizure activity >5 minutes.",
+        options: [
+          { text: "Lorazepam 4mg IV slow push over 2 minutes", correct: true },
+          { text: "Phenytoin (Dilantin) 1000mg IV rapid infusion", correct: false },
+          { text: "Insert a padded tongue blade to prevent tongue biting", correct: false },
+          { text: "Restrain patient limbs firmly to prevent injury", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "IV Lorazepam rapidly crosses the blood-brain barrier to stop status epilepticus." },
+          { opt: "B", status: "Incorrect", text: "Phenytoin is a second-line maintenance drug with slow onset." },
+          { opt: "C", status: "Incorrect", text: "Forcing objects into mouth causes dental trauma and airway occlusion." },
+          { opt: "D", status: "Incorrect", text: "Restraining active convulsions leads to muscle tears and bone fractures." }
+        ]
+      },
+      {
+        id: 5,
+        title: "Hyperkalemia w/ Cardiac Toxicity",
+        vignette: "A chronic kidney disease patient presents with a serum K+ of 7.4 mEq/L, weakness, and ECG showing tall peaked T waves and wide QRS.",
+        esi: "ESI 1",
+        action: "Continuous cardiac monitoring, prepare for emergency hemodialysis.",
+        drug: "Calcium Gluconate 10%",
+        dose: "10-20 mL (1-2g) IV push",
+        time: "STAT over 2-5 mins",
+        rightness: "Directly antagonizes membrane excitability to prevent lethal VF/asystole within 1-3 minutes.",
+        options: [
+          { text: "Calcium Gluconate 10% 10mL IV push over 3 minutes", correct: true },
+          { text: "Regular Insulin 10 units IV with D50W", correct: false },
+          { text: "Sodium Polystyrene Sulfonate (Kayexalate) 30g PO", correct: false },
+          { text: "Sodium Bicarbonate 50 mEq IV push", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Calcium Gluconate stabilizes cardiac myocytes against potassium-induced arrhythmias." },
+          { opt: "B", status: "Incorrect", text: "Insulin shifts potassium intracellularly but takes 15-30 minutes to work." },
+          { opt: "C", status: "Incorrect", text: "Kayexalate eliminates potassium through gut over hours/days; useless in acute toxicity." },
+          { opt: "D", status: "Incorrect", text: "Bicarbonate is secondary and controversial; does not protect heart membranes immediately." }
+        ]
+      },
+      {
+        id: 6,
+        title: "Septic Shock (Golden Hour)",
+        vignette: "A 68-year-old female presents with fever (39.2°C), HR 128, BP 82/44 mmHg, serum lactate 4.5 mmol/L, and suspected pyelonephritis.",
+        esi: "ESI 1",
+        action: "Obtain 2 sets of blood cultures BEFORE antibiotics, start 30mL/kg crystalloid bolus.",
+        drug: "Ceftriaxone + Normal Saline Bolus",
+        dose: "30 mL/kg NS bolus + 2g IV Ceftriaxone",
+        time: "Within 1 Hour ('Golden Hour')",
+        rightness: "Fluid resuscitation and early broad-spectrum coverage within 60 minutes improves survival.",
+        options: [
+          { text: "Obtain blood cultures then initiate 30 mL/kg NS bolus + broad-spectrum IV antibiotics within 1 hour", correct: true },
+          { text: "Administer Norepinephrine infusion immediately before fluid bolus", correct: false },
+          { text: "Administer IV Paracetamol and recheck vitals in 2 hours", correct: false },
+          { text: "Wait for urine culture results before starting IV antibiotics", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Cultures first, followed by immediate 30mL/kg fluid resuscitation and broad-spectrum antibiotics within 1 hr." },
+          { opt: "B", status: "Incorrect", text: "Vasopressors are indicated only if MAP <65 mmHg persists AFTER fluid bolus." },
+          { opt: "C", status: "Incorrect", text: "Antipyretics treat comfort but do not halt septic shock progression." },
+          { opt: "D", status: "Incorrect", text: "Delaying antibiotic therapy beyond 1 hour significantly increases sepsis mortality." }
+        ]
+      },
+      {
+        id: 7,
+        title: "Severe Tension Pneumothorax",
+        vignette: "A trauma patient displays severe respiratory distress, absent right breath sounds, tracheal deviation to the left, and BP 72/40 mmHg.",
+        esi: "ESI 1",
+        action: "Immediate decompression, high-flow O2, prepare chest tube insertion setup.",
+        drug: "Needle Thoracostomy (14G)",
+        dose: "14-gauge catheter (2nd/5th ICS)",
+        time: "STAT Immediate",
+        rightness: "Converts life-threatening tension pneumothorax to simple pneumothorax to release obstructive shock.",
+        options: [
+          { text: "Perform 14-gauge needle decompression at 2nd intercostal space midclavicular line STAT", correct: true },
+          { text: "Send patient for urgent stat portable chest X-ray", correct: false },
+          { text: "Endotracheal intubation with positive pressure ventilation", correct: false },
+          { text: "Apply 100% Non-Rebreather oxygen mask and monitor", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Needle decompression is a life-saving clinical intervention performed BEFORE chest X-ray." },
+          { opt: "B", status: "Incorrect", text: "Waiting for X-ray confirmation in tension pneumothorax causes cardiac arrest." },
+          { opt: "C", status: "Incorrect", text: "Positive pressure ventilation will worsen tension and accelerate cardiovascular collapse." },
+          { opt: "D", status: "Incorrect", text: "Oxygen alone does not relieve the mechanical pressure compressing the heart and vena cava." }
+        ]
+      },
+      {
+        id: 8,
+        title: "Acute Opioid Overdose",
+        vignette: "A 30-year-old patient is brought in cyanotic, unresponsive, with pinpoint pupils and RR of 4 breaths/minute.",
+        esi: "ESI 1",
+        action: "Bag-valve-mask ventilation with 100% O2, preserve airway, give reversal agent.",
+        drug: "Naloxone (Narcan)",
+        dose: "0.4 - 2.0 mg IV / IN / IM",
+        time: "STAT (Repeat q2-3m PRN)",
+        rightness: "Competitive mu-opioid receptor antagonist restoring spontaneous respiration.",
+        options: [
+          { text: "Assist ventilation with Bag-Valve-Mask and administer Naloxone 0.4mg IV STAT", correct: true },
+          { text: "Perform immediate endotracheal intubation", correct: false },
+          { text: "Administer Flumazenil 0.2mg IV push", correct: false },
+          { text: "Infuse Normal Saline 1000mL IV push", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "BVM oxygenation paired with IV/IN Naloxone rapidly reverses opioid respiratory depression." },
+          { opt: "B", status: "Incorrect", text: "Intubation is invasive and unnecessary if Naloxone successfully restores spontaneous breathing." },
+          { opt: "C", status: "Incorrect", text: "Flumazenil reverses benzodiazepines, not opioids; risks inducing refractory seizures." },
+          { opt: "D", status: "Incorrect", text: "Fluids do not fix central nervous system respiratory drive suppression." }
+        ]
+      },
+      {
+        id: 9,
+        title: "Acute Ischemic Stroke (Thrombolysis Window)",
+        vignette: "A 62-year-old male presents with sudden right-sided facial droop, arm drift, and aphasia starting 90 minutes ago. BP 170/95 mmHg.",
+        esi: "ESI 1",
+        action: "NCCT Brain scan within 20 mins, NIHSS assessment, check capillary glucose.",
+        drug: "Alteplase (tPA) / Tenecteplase",
+        dose: "0.9 mg/kg IV (Max 90mg)",
+        time: "Within 3 to 4.5 Hours Window",
+        rightness: "Rule out intracranial hemorrhage via non-contrast CT prior to thrombolytic administration.",
+        options: [
+          { text: "Stat non-contrast CT head to rule out hemorrhage before IV tPA evaluation", correct: true },
+          { text: "Administer Aspirin 325mg PO immediately", correct: false },
+          { text: "Lower blood pressure rapidly with IV Labetalol to <120/80 mmHg", correct: false },
+          { text: "Perform lumbar puncture to rule out subarachnoid hemorrhage", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Non-contrast CT brain scan is mandatory to exclude brain bleed prior to thrombolytic therapy." },
+          { opt: "B", status: "Incorrect", text: "Aspirin must be held for 24 hours if the patient is a candidate for tPA." },
+          { opt: "C", status: "Incorrect", text: "Aggressive BP reduction reduces cerebral perfusion pressure; maintain BP <185/110 for tPA." },
+          { opt: "D", status: "Incorrect", text: "Lumbar puncture delays time-critical door-to-needle thrombolysis window." }
+        ]
+      },
+      {
+        id: 10,
+        title: "Hypertensive Crisis w/ End-Organ Damage",
+        vignette: "A 58-year-old male presents with severe occipital headache, blurred vision, BP 230/130 mmHg, and papilledema.",
+        esi: "ESI 1",
+        action: "Continuous arterial BP line, target MAP reduction by 20-25% in 1st hour.",
+        drug: "Labetalol / Nicardipine IV",
+        dose: "Labetalol 20 mg IV slow push",
+        time: "STAT over 2 mins",
+        rightness: "Gradual MAP reduction prevents cerebral ischemia, renal failure, or stroke.",
+        options: [
+          { text: "Administer Labetalol 20mg IV over 2 min; reduce MAP by maximum 20-25% in 1st hour", correct: true },
+          { text: "Administer Sublingual Nifedipine 10mg capsule bitten and swallowed", correct: false },
+          { text: "Reduce systolic BP rapidly to 120 mmHg within 30 minutes", correct: false },
+          { text: "Administer Furosemide 80mg IV push STAT", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Controlled IV titration prevents precipitous BP drops that trigger brain ischemic infarcts." },
+          { opt: "B", status: "Incorrect", text: "Sublingual Nifedipine is BANNED due to unpredictable drastic drops causing stroke/MI." },
+          { opt: "C", status: "Incorrect", text: "Overly rapid BP reduction compromises organ perfusion." },
+          { opt: "D", status: "Incorrect", text: "Loop diuretics are indicated for fluid overload (pulmonary edema), not primary neuro protection." }
+        ]
+      },
+      {
+        id: 11,
+        title: "Diabetic Ketoacidosis (DKA)",
+        vignette: "A 19-year-old female presents with Kussmaul breathing, fruity breath, blood glucose 480 mg/dL, pH 7.12, serum K+ 4.8 mEq/L.",
+        esi: "ESI 2",
+        action: "Start 0.9% Normal Saline fluid replacement FIRST before insulin infusion.",
+        drug: "0.9% Normal Saline -> Regular Insulin",
+        dose: "1 - 1.5 L NS in 1st hr / Insulin 0.1 U/kg/hr",
+        time: "STAT Fluid Bolus First",
+        rightness: "Restores intravascular volume; giving insulin before fluid causes vascular collapse.",
+        options: [
+          { text: "Initiate 0.9% Normal Saline 1L/hr IV bolus prior to insulin drip", correct: true },
+          { text: "Administer Regular Insulin 10 units IV bolus immediately", correct: false },
+          { text: "Administer Sodium Bicarbonate IV infusion to correct pH", correct: false },
+          { text: "Administer Potassium Chloride 40 mEq IV bolus", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Rehydration is step 1 in DKA to expand circulatory volume and clear counter-regulatory hormones." },
+          { opt: "B", status: "Incorrect", text: "Insulin without fluid expansion shifts water intracellularly and precipitates hypovolemic shock." },
+          { opt: "C", status: "Incorrect", text: "Bicarbonate is recommended only if pH <6.9 due to risks of paradoxical CSF acidosis." },
+          { opt: "D", status: "Incorrect", text: "Potassium must NEVER be given as IV push (fatal dysrhythmia)." }
+        ]
+      },
+      {
+        id: 12,
+        title: "Acute Severe Asthma Exacerbation",
+        vignette: "A 14-year-old boy presents with severe dyspnea, silent chest on auscultation, intercostal retractions, and SpO2 86% on room air.",
+        esi: "ESI 1",
+        action: "High-flow oxygen, continuous nebulization, IV corticosteroids.",
+        drug: "Albuterol + Ipratropium + Methylprednisolone",
+        dose: "Albuterol 5mg + Atrovent 0.5mg Neb",
+        time: "STAT Continuous",
+        rightness: "'Silent chest' signifies impending respiratory failure requiring aggressive combined bronchodilation.",
+        options: [
+          { text: "Continuous Albuterol/Ipratropium neb with O2 + IV Methylprednisolone STAT", correct: true },
+          { text: "Administer Sedative for agitation and prepare intubation", correct: false },
+          { text: "Administer IV Salbutamol bolus over 1 minute", correct: false },
+          { text: "Apply continuous positive airway pressure (CPAP) 15 cmH2O", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Inhaled beta-2 agonists + anticholinergics with systemic IV steroids revert severe bronchospasm." },
+          { opt: "B", status: "Incorrect", text: "Sedatives suppress respiratory drive in status asthmaticus and are contra-indicated." },
+          { opt: "C", status: "Incorrect", text: "Inhaled route is safer and preferred over IV beta-agonist boluses." },
+          { opt: "D", status: "Incorrect", text: "High CPAP pressures increase risk of barotrauma and pneumothorax in hyperinflated lungs." }
+        ]
+      },
+      {
+        id: 13,
+        title: "Torsades de Pointes (Polymorphic VT)",
+        vignette: "A patient on QT-prolonging medications develops polymorphic ventricular tachycardia on the monitor with a pulse.",
+        esi: "ESI 1",
+        action: "Continuous ECG, prepare defibrillator, review baseline QTc interval.",
+        drug: "Magnesium Sulfate",
+        dose: "1 - 2 g IV diluted over 5-15 mins",
+        time: "STAT over 5-15 mins",
+        rightness: "Magnesium suppresses early afterdepolarizations and terminates Torsades.",
+        options: [
+          { text: "Administer Magnesium Sulfate 2g IV diluted over 10 minutes", correct: true },
+          { text: "Administer Amiodarone 150mg IV push", correct: false },
+          { text: "Perform immediate unsynchronized cardioversion at 200J", correct: false },
+          { text: "Administer Adenosine 6mg rapid IV push", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "IV Magnesium is the drug of choice for Torsades de Pointes regardless of serum magnesium." },
+          { opt: "B", status: "Incorrect", text: "Amiodarone prolongs QT interval further and worsens Torsades de Pointes." },
+          { opt: "C", status: "Incorrect", text: "Pharmacologic treatment is 1st line if pulse is present; cardioversion if unstable." },
+          { opt: "D", status: "Incorrect", text: "Adenosine is for narrow-complex SVT, not polymorphic ventricular tachycardia." }
+        ]
+      },
+      {
+        id: 14,
+        title: "Massive Pulmonary Embolism",
+        vignette: "A post-operative orthopedic patient experiences sudden dyspnea, pleuritic chest pain, HR 135, BP 76/40 mmHg, and acute RV strain on ECG.",
+        esi: "ESI 1",
+        action: "High-flow O2, fluid support cautious, prepare thrombolysis or embolectomy.",
+        drug: "Alteplase (tPA) / Unfractionated Heparin",
+        dose: "tPA 100 mg IV over 2 hours",
+        time: "STAT Emergency Infusion",
+        rightness: "Thrombolysis restores right ventricular function in massive PE causing hemodynamic collapse.",
+        options: [
+          { text: "Prepare systemic thrombolytic therapy (Alteplase 100mg IV) and O2 STAT", correct: true },
+          { text: "Initiate Subcutaneous Low Molecular Weight Heparin (Enoxaparin)", correct: false },
+          { text: "Administer 3 Liters Normal Saline fluid bolus rapidly", correct: false },
+          { text: "Place patient in high Fowler's position and reassess in 30 mins", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Massive PE with sustained hypotension (SBP <90) warrants immediate systemic thrombolysis." },
+          { opt: "B", status: "Incorrect", text: "LMWH is anticoagulant (prevents new clots); it does not break down massive existing clot." },
+          { opt: "C", status: "Incorrect", text: "Aggressive fluid overload worsens acute right ventricular dilatation and failure." },
+          { opt: "D", status: "Incorrect", text: "Positioning alone does not address obstructive cardiovascular collapse." }
+        ]
+      },
+      {
+        id: 15,
+        title: "Acute Pulmonary Edema (Acute Decompensated HF)",
+        vignette: "An 72-year-old male presents with severe orthopnea, pink frothy sputum, bilateral crackles, BP 195/110 mmHg, and SpO2 82%.",
+        esi: "ESI 1",
+        action: "Sit upright with legs dangling, apply BiPAP/NIV oxygen therapy.",
+        drug: "Furosemide + Nitroglycerin IV",
+        dose: "Furosemide 40-80mg IV + NTG Drip",
+        time: "STAT",
+        rightness: "Reduces preload and afterload to clear alveolar fluid accumulation.",
+        options: [
+          { text: "Position upright, initiate BiPAP, give IV Furosemide 40mg + Nitroglycerin STAT", correct: true },
+          { text: "Place patient flat supine and administer 2L O2 via nasal cannula", correct: false },
+          { text: "Administer IV Normal Saline 500mL fluid bolus", correct: false },
+          { text: "Administer Metoprolol 5mg IV push STAT", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "BiPAP reduces work of breathing; Furosemide & Nitroglycerin venodilate to clear lung congestion." },
+          { opt: "B", status: "Incorrect", text: "Supine positioning increases venous return and worsens pulmonary edema." },
+          { opt: "C", status: "Incorrect", text: "Fluid bolus exacerbates fluid volume overload and pulmonary congestion." },
+          { opt: "D", status: "Incorrect", text: "Beta-blockers exhibit negative inotropic effects and worsen acute decompensated heart failure." }
+        ]
+      },
+      {
+        id: 16,
+        title: "Active Upper GI Bleed w/ Hypovolemic Shock",
+        vignette: "A history of liver cirrhosis patient presents vomiting 800mL bright red blood (hematemesis), pale, HR 130, BP 80/45 mmHg.",
+        esi: "ESI 1",
+        action: "Two large-bore IVs (16G/14G), rapid fluid/blood transfusion, airway protection.",
+        drug: "Octreotide + Pantoprazole + PRBCs",
+        dose: "Octreotide 50 mcg IV bolus -> 50 mcg/hr",
+        time: "STAT Emergency Protocol",
+        rightness: "Octreotide reduces splanchnic blood flow to control esophageal variceal bleeding.",
+        options: [
+          { text: "Insert two 16G peripheral IVs, initiate blood product transfusion & Octreotide IV STAT", correct: true },
+          { text: "Insert small bore 22G IV and start Dextrose 5% in Water drip", correct: false },
+          { text: "Administer Oral Tranexamic Acid 1g with water", correct: false },
+          { text: "Insert nasogastric tube and perform warm water lavage", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Large-bore access allows rapid blood product resuscitation; Octreotide controls variceal pressure." },
+          { opt: "B", status: "Incorrect", text: "22G IV cannot support high-flow blood/fluid resuscitation in hypovolemic shock." },
+          { opt: "C", status: "Incorrect", text: "Oral medications are strictly contraindicated during active hematemesis." },
+          { opt: "D", status: "Incorrect", text: "Routine NG lavage is no longer recommended and delays definitive endoscopy." }
+        ]
+      },
+      {
+        id: 17,
+        title: "Unstable Supraventricular Tachycardia (SVT)",
+        vignette: "A 26-year-old female presents with sudden onset narrow-complex tachycardia at 210 bpm, chest pain, dizziness, and BP 82/48 mmHg.",
+        esi: "ESI 1",
+        action: "Attach defibrillator pads, sedation if feasible, sync mode ON.",
+        drug: "Synchronized Cardioversion",
+        dose: "50 - 100 Joules (Biphasic)",
+        time: "STAT Immediate",
+        rightness: "Unstable tachyarrhythmias with hypotension require immediate synchronized electrical cardioversion.",
+        options: [
+          { text: "Perform immediate Synchronized Electrical Cardioversion at 50-100J STAT", correct: true },
+          { text: "Administer Adenosine 6mg rapid IV push with 20mL NS flush", correct: false },
+          { text: "Instruct patient to perform vagal maneuvers (Valsalva)", correct: false },
+          { text: "Administer Diltiazem 0.25mg/kg IV over 2 minutes", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Symptomatic instability (hypotension, chest pain) mandates immediate synchronized cardioversion." },
+          { opt: "B", status: "Incorrect", text: "Adenosine is 1st-line ONLY if the patient is hemodynamically STABLE." },
+          { opt: "C", status: "Incorrect", text: "Vagal maneuvers delay electrical conversion in an unstable patient." },
+          { opt: "D", status: "Incorrect", text: "Calcium channel blockers cause further vasodilation and worsen hypotension." }
+        ]
+      },
+      {
+        id: 18,
+        title: "Symptomatic Bradycardia w/ Hypoperfusion",
+        vignette: "A 70-year-old male displays sinus bradycardia at 34 bpm, confusion, cold clammy skin, and BP 74/40 mmHg.",
+        esi: "ESI 1",
+        action: "Transcutaneous pacing pads applied, monitor vitals, prepare IV access.",
+        drug: "Atropine Sulfate",
+        dose: "1 mg IV push (q3-5m, Max 3mg)",
+        time: "STAT over 1-2 seconds",
+        rightness: "Anticholinergic blocking vagal tone to increase SA node firing rate.",
+        options: [
+          { text: "Administer Atropine 1mg IV push STAT; apply transcutaneous pacing pads", correct: true },
+          { text: "Administer Atropine 0.2mg IV push STAT", correct: false },
+          { text: "Administer Amiodarone 150mg IV drip over 10 minutes", correct: false },
+          { text: "Obtain stat 12-lead ECG prior to any treatment", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Atropine 1mg IV is 1st-line for symptomatic bradycardia while setting up external pacing." },
+          { opt: "B", status: "Incorrect", text: "Doses <0.5mg produce paradoxical slowing of heart rate." },
+          { opt: "C", status: "Incorrect", text: "Amiodarone slows conduction further and exacerbates severe bradycardia." },
+          { opt: "D", status: "Incorrect", text: "Treat hemodynamic instability immediately; do not delay for diagnostic ECG." }
+        ]
+      },
+      {
+        id: 19,
+        title: "Acute Bacterial Meningitis",
+        vignette: "A 21-year-old university student presents with sudden fever (39.5°C), severe headache, nuchal rigidity, petechial rash, and positive Kernig's sign.",
+        esi: "ESI 2",
+        action: "Droplet precautions isolation IMMEDIATELY, blood cultures, lumbar puncture prep.",
+        drug: "Ceftriaxone + Vancomycin + Dexamethasone",
+        dose: "Ceftriaxone 2g IV + Vanco 15-20mg/kg IV",
+        time: "Within 30-60 mins STAT",
+        rightness: "Droplet isolation prevents hospital outbreak; early IV antibiotics prevent neurological mortality.",
+        options: [
+          { text: "Place in Droplet Isolation immediately and initiate IV Ceftriaxone + Vancomycin STAT", correct: true },
+          { text: "Send patient for non-contrast head CT and await result before isolation", correct: false },
+          { text: "Perform Lumbar Puncture before placing patient on isolation precautions", correct: false },
+          { text: "Administer Oral Paracetamol and observe in general waiting area", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Immediate droplet isolation prevents N. meningitidis transmission; rapid empiric antibiotics protect brain." },
+          { opt: "B", status: "Incorrect", text: "Isolation must happen instantly upon clinical suspicion, prior to imaging." },
+          { opt: "C", status: "Incorrect", text: "Infection control takes precedence over diagnostic lumbar puncture." },
+          { opt: "D", status: "Incorrect", text: "Meningococcemia is a fatal emergency; waiting area placement risks epidemic spread." }
+        ]
+      },
+      {
+        id: 20,
+        title: "Severe Heat Stroke w/ Altered Mental Status",
+        vignette: "A pilgrim during Hajj is brought in unconscious, hot dry skin, core rectal temperature 41.2°C (106.1°F), HR 140, BP 84/50 mmHg.",
+        esi: "ESI 1",
+        action: "Aggressive core cooling, IV fluids, continuous rectal temperature probe.",
+        drug: "Evaporative Cooling / Cold Water Immersion",
+        dose: "Cool core temp to <39°C (102.2°F)",
+        time: "STAT within 30 minutes",
+        rightness: "Rapid cooling reduces multiorgan failure and permanent brain damage.",
+        options: [
+          { text: "Initiate evaporative cooling (mist & fan) / cold water immersion and chilled NS fluids STAT", correct: true },
+          { text: "Administer IV Antipyretics (Paracetamol 1g IV) to lower hypothalamic set point", correct: false },
+          { text: "Apply warm blankets to prevent shivering response", correct: false },
+          { text: "Infuse 4 Liters of room temperature fluids over 6 hours", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Physical external/internal cooling is the cornerstone of heat stroke treatment." },
+          { opt: "B", status: "Incorrect", text: "Antipyretics are INEFFECTIVE in heat stroke because hyperthermia is environmental, not hypothalamic." },
+          { opt: "C", status: "Incorrect", text: "Blanketing retains lethal heat; shivering is managed with Benzodiazepines if needed." },
+          { opt: "D", status: "Incorrect", text: "Infusion must be rapid and chilled to achieve core temperature targets <39°C within 30 min." }
+        ]
+      },
+      {
+        id: 21,
+        title: "Acute Carbon Monoxide (CO) Poisoning",
+        vignette: "A family found inside a closed room with a charcoal heater present with dizziness, nausea, confusion, and bright cherry-red skin. SpO2 reads 99%.",
+        esi: "ESI 1",
+        action: "High-flow 100% oxygen via Non-Rebreather mask, send blood for Carboxyhemoglobin (CoHb).",
+        drug: "100% Hyperbaric / Normobaric Oxygen",
+        dose: "100% FiO2 via NRB Mask at 15 L/min",
+        time: "STAT continuous",
+        rightness: "100% oxygen reduces CO half-life in blood from 300 minutes down to 80 minutes.",
+        options: [
+          { text: "Administer 100% Oxygen via Non-Rebreather Mask at 15L/min STAT", correct: true },
+          { text: "Wean oxygen therapy based on the SpO2 reading of 99%", correct: false },
+          { text: "Administer Nebulized Bronchodilators and Corticosteroids", correct: false },
+          { text: "Obtain routine Arterial Blood Gas and wait for PaO2 result", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "100% O2 competes with CO for hemoglobin binding sites, drastically accelerating CO elimination." },
+          { opt: "B", status: "Incorrect", text: "Pulse oximeters CANNOT distinguish carboxyhemoglobin from oxyhemoglobin (false 99%)." },
+          { opt: "C", status: "Incorrect", text: "CO poisoning causes systemic cellular hypoxia, not localized airway bronchospasm." },
+          { opt: "D", status: "Incorrect", text: "Oxygen therapy must start immediately without waiting for lab carboxyhemoglobin confirmation." }
+        ]
+      },
+      {
+        id: 22,
+        title: "Acute Angle-Closure Glaucoma",
+        vignette: "A 60-year-old female presents with sudden severe right eye pain, halos around lights, cloudy cornea, fixed mid-dilated pupil, and severe nausea.",
+        esi: "ESI 2",
+        action: "Immediate ophthalmology consult, keep patient supine, diminish room light.",
+        drug: "Timolol Drops + IV Acetazolamide",
+        dose: "Timolol 0.5% drops + Acetazolamide 500mg IV",
+        time: "Within 30-60 mins",
+        rightness: "Decreases aqueous humor production to lower intraocular pressure and prevent permanent blindness.",
+        options: [
+          { text: "Administer topical Timolol 0.5% eye drops & IV Acetazolamide 500mg STAT", correct: true },
+          { text: "Administer Mydriatic eye drops (Atropine) to dilate the pupil", correct: false },
+          { text: "Apply warm moist compresses and eye patch over affected eye", correct: false },
+          { text: "Administer IV Morphine and discharge to outpatient clinic", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Beta-blockers and carbonic anhydrase inhibitors rapidly reduce intraocular pressure." },
+          { opt: "B", status: "Incorrect", text: "Mydriatic drops (pupil dilators) worsen angle closure and can trigger permanent blindness." },
+          { opt: "C", status: "Incorrect", text: "Compressing or patching closed angles can further increase intraocular pressure." },
+          { opt: "D", status: "Incorrect", text: "This is a ocular sight-threatening emergency requiring immediate reduction of IOP." }
+        ]
+      },
+      {
+        id: 23,
+        title: "Organophosphate Insecticide Toxicity",
+        vignette: "A farmer arrives with profuse salivation, lacrimation, urination, diarrhea, muscle fasciculations, and severe bradycardia (DUMBELS signs).",
+        esi: "ESI 1",
+        action: "Decontaminate skin (remove clothing), healthcare team PPE protection, airway suction.",
+        drug: "Atropine Sulfate + Pralidoxime (2-PAM)",
+        dose: "Atropine 2-5 mg IV q5m until secretions dry",
+        time: "STAT repeated high doses",
+        rightness: "Titrate Atropine specifically until bronchial secretions dry and airways clear.",
+        options: [
+          { text: "Decontaminate staff/patient, give high-dose Atropine IV until bronchial secretions dry", correct: true },
+          { text: "Administer Physostigmine 2mg IV push STAT", correct: false },
+          { text: "Administer Activated Charcoal PO without airway protection", correct: false },
+          { text: "Administer Succinylcholine for rapid sequence intubation", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Atropine competes with acetylcholine. The endpoint of atropinization is clear lung sounds and dry secretions." },
+          { opt: "B", status: "Incorrect", text: "Physostigmine is an acetylcholinesterase inhibitor; it worsens organophosphate poisoning." },
+          { opt: "C", status: "Incorrect", text: "Oral charcoal risks fatal aspiration in patients with hypersecretion and reduced consciousness." },
+          { opt: "D", status: "Incorrect", text: "Succinylcholine is metabolized by cholinesterase; organophosphates cause prolonged paralysis." }
+        ]
+      },
+      {
+        id: 24,
+        title: "Postpartum Hemorrhage (PPH)",
+        vignette: "A mother delivers a 4.1 kg infant and experiences heavy vaginal bleeding (>1000 mL) with a soft, boggy uterus above the umbilicus.",
+        esi: "ESI 1",
+        action: "Fundal massage immediately, 2 large-bore IVs, weigh blood sponges, Foley catheter.",
+        drug: "Oxytocin (Syntocinon)",
+        dose: "20-40 units in 1000 mL NS IV drip",
+        time: "STAT continuous infusion",
+        rightness: "First-line uterotonic agent to contract myometrium and constrict uterine blood vessels.",
+        options: [
+          { text: "Perform continuous fundal massage and infuse Oxytocin 20-40U in NS STAT", correct: true },
+          { text: "Administer Methylergonovine (Methergine) IV push in severe hypertension", correct: false },
+          { text: "Pack the vagina with sterile gauze without uterine massage", correct: false },
+          { text: "Prepare patient for immediate surgical hysterectomy before medications", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Fundal massage + Oxytocin is the mandatory primary intervention for uterine atony." },
+          { opt: "B", status: "Incorrect", text: "Methergine is contraindicated in hypertensive patients (causes vasoconstrictive stroke)." },
+          { opt: "C", status: "Incorrect", text: "Vaginal packing conceals internal blood accumulation without stopping uterine atony." },
+          { opt: "D", status: "Incorrect", text: "Medical uterotonics and conservative measures precede irreversible surgical removal." }
+        ]
+      },
+      {
+        id: 25,
+        title: "Deep Vein Thrombosis (DVT) w/ PE Risk",
+        vignette: "A 50-year-old female presents with unilateral left calf swelling, warmth, tenderness, and positive Homans sign after a 14-hour flight.",
+        esi: "ESI 3",
+        action: "Bed rest, elevate lower extremity, avoid massaging leg, venous duplex ultrasound.",
+        drug: "Unfractionated Heparin / LMWH",
+        dose: "Enoxaparin 1 mg/kg SubQ q12h",
+        time: "Initiate after diagnostic confirmation",
+        rightness: "Prevents clot propagation and secondary fatal pulmonary embolism.",
+        options: [
+          { text: "Maintain bed rest, elevate leg, avoid calf massage, initiate LMWH SubQ", correct: true },
+          { text: "Apply sequential compression devices (SCD) to the affected leg", correct: false },
+          { text: "Perform vigorous deep tissue massage to break up calf swelling", correct: false },
+          { text: "Encourage active ambulation to promote lower extremity circulation", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "Prevents mechanical clot dislodgement while therapeutic anticoagulation arrests thrombus growth." },
+          { opt: "B", status: "Incorrect", text: "Applying compression pumps to an ACTIVE DVT risks dislodging a pulmonary embolus." },
+          { opt: "C", status: "Incorrect", text: "Massaging a deep vein thrombosis directly causes lethal pulmonary embolic migration." },
+          { opt: "D", status: "Incorrect", text: "Strenuous exercise on an un-anticoagulated fresh DVT increases PE detachment risks." }
         ]
       }
     ];
@@ -315,7 +814,7 @@
       document.getElementById(`view-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).className = "px-4 py-2 rounded-lg bg-teal-600 text-white shadow-md flex items-center gap-2 transition-all";
 
-      if (tab === 'matrix') renderMatrix(protocols);
+      if (tab === 'matrix') renderMatrix(casesData);
       if (tab === 'vignette') renderVignette(currentVignetteIdx);
       if (tab === 'game') loadGameQuestion();
     }
@@ -323,12 +822,12 @@
     // ================= GAME ENGINE =================
     function loadGameQuestion() {
       clearInterval(gameState.timer);
-      const q = gameQuestions[gameState.index];
+      const q = casesData[gameState.index];
       
-      document.getElementById('case-title').innerText = q.title;
+      document.getElementById('case-title').innerText = `${q.id}. ${q.title}`;
       document.getElementById('case-vignette').innerText = q.vignette;
-      document.getElementById('case-category').innerText = q.esi;
-      document.getElementById('case-counter').innerText = `Case ${gameState.index + 1} of ${gameQuestions.length}`;
+      document.getElementById('case-category').innerText = `${q.esi} - ${q.esi === 'ESI 1' ? 'Emergent' : q.esi === 'ESI 2' ? 'Urgent' : 'Non-Emergent'}`;
+      document.getElementById('case-counter').innerText = `Case ${gameState.index + 1} of ${casesData.length}`;
       document.getElementById('game-feedback').classList.add('hidden');
 
       const grid = document.getElementById('options-grid');
@@ -368,16 +867,19 @@
       const feedback = document.getElementById('game-feedback');
       feedback.classList.remove('hidden');
 
+      const currentCase = casesData[gameState.index];
+      const correctOption = currentCase.options.find(o => o.correct).text;
+
       if (isCorrect) {
         gameState.correctCount++;
         gameState.score += 100 + (gameState.timeLeft * 10);
         gameState.streak++;
         feedback.className = "p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm font-medium";
-        feedback.innerHTML = `<div class="font-bold mb-1">✔ Correct Action!</div>${gameQuestions[gameState.index].explanation}`;
+        feedback.innerHTML = `<div class="font-bold mb-1">✔ Correct Action!</div>${currentCase.rightness}`;
       } else {
         gameState.streak = 0;
         feedback.className = "p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 text-sm font-medium";
-        feedback.innerHTML = `<div class="font-bold mb-1">✖ ${isTimeout ? 'Time Expired!' : 'Incorrect Choice'}</div>${gameQuestions[gameState.index].explanation}`;
+        feedback.innerHTML = `<div class="font-bold mb-1">✖ ${isTimeout ? 'Time Expired!' : 'Incorrect Choice'}</div><strong>Correct Priority:</strong> ${correctOption}<br/><span class="text-xs text-slate-300 mt-1 block">${currentCase.rightness}</span>`;
       }
 
       // Update Scoreboard
@@ -385,11 +887,21 @@
       document.getElementById('game-streak').innerText = gameState.streak;
       document.getElementById('game-accuracy').innerText = `${Math.round((gameState.correctCount / gameState.totalAnswered) * 100)}%`;
 
-      // Next Case Delayed Transition
+      // Next Case Transition
       setTimeout(() => {
-        gameState.index = (gameState.index + 1) % gameQuestions.length;
+        gameState.index = (gameState.index + 1) % casesData.length;
         loadGameQuestion();
-      }, 2500);
+      }, 3000);
+    }
+
+    function skipQuestion() {
+      gameState.index = (gameState.index + 1) % casesData.length;
+      loadGameQuestion();
+    }
+
+    function prevQuestion() {
+      gameState.index = (gameState.index - 1 + casesData.length) % casesData.length;
+      loadGameQuestion();
     }
 
     function resetGame() {
@@ -411,15 +923,15 @@
         tr.innerHTML = `
           <td class="px-4 py-3 font-semibold text-slate-400 mono">${p.id}</td>
           <td class="px-4 py-3">
-            <div class="font-bold text-slate-100">${p.case}</div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${p.esi === 'ESI 1' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">${p.esi}</span>
+            <div class="font-bold text-slate-100">${p.title}</div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${p.esi === 'ESI 1' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : p.esi === 'ESI 2' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'}">${p.esi}</span>
           </td>
-          <td class="px-4 py-3 text-slate-300 max-w-xs">${p.action}</td>
-          <td class="px-4 py-3 font-medium text-teal-300">${p.drug}</td>
-          <td class="px-4 py-3 text-slate-300 mono">${p.dose}</td>
+          <td class="px-4 py-3 text-slate-300 max-w-xs text-xs">${p.action}</td>
+          <td class="px-4 py-3 font-medium text-teal-300 text-xs">${p.drug}</td>
+          <td class="px-4 py-3 text-slate-300 mono text-xs">${p.dose}</td>
           <td class="px-4 py-3">
             <div class="font-bold text-amber-400 text-xs">${p.time}</div>
-            <div class="text-[11px] text-slate-400">${p.rightness}</div>
+            <div class="text-[11px] text-slate-400 leading-tight">${p.rightness}</div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -428,42 +940,44 @@
 
     function filterMatrix() {
       const query = document.getElementById('matrix-search').value.toLowerCase();
-      const filtered = protocols.filter(p => 
-        p.case.toLowerCase().includes(query) ||
+      const filtered = casesData.filter(p => 
+        p.title.toLowerCase().includes(query) ||
         p.drug.toLowerCase().includes(query) ||
-        p.action.toLowerCase().includes(query)
+        p.action.toLowerCase().includes(query) ||
+        p.vignette.toLowerCase().includes(query)
       );
       renderMatrix(filtered);
     }
 
     function filterESI(esi) {
-      if (esi === 'ALL') return renderMatrix(protocols);
-      const filtered = protocols.filter(p => p.esi.startsWith(esi));
+      if (esi === 'ALL') return renderMatrix(casesData);
+      const filtered = casesData.filter(p => p.esi.startsWith(esi));
       renderMatrix(filtered);
     }
 
     // ================= BOARD VIGNETTE ENGINE =================
     function renderVignette(idx) {
-      const v = vignettes[idx];
-      document.getElementById('vignette-number').innerText = `Question ${idx + 1} of ${vignettes.length}`;
-      document.getElementById('vignette-q-title').innerText = v.title;
-      document.getElementById('vignette-q-text').innerText = v.text;
+      const v = casesData[idx];
+      document.getElementById('vignette-number').innerText = `Question ${idx + 1} of ${casesData.length}`;
+      document.getElementById('vignette-q-title').innerText = `${v.id}. ${v.title}`;
+      document.getElementById('vignette-q-text').innerText = v.vignette;
       document.getElementById('rationale-card').classList.add('hidden');
 
       const container = document.getElementById('vignette-options');
       container.innerHTML = '';
 
-      v.options.forEach((opt) => {
+      const labels = ['A', 'B', 'C', 'D'];
+      v.options.forEach((opt, oIdx) => {
         const btn = document.createElement('button');
         btn.className = "w-full text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-teal-500 transition-all text-sm font-medium flex items-center gap-3";
-        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs mono">${opt.label}</span> <span>${opt.text}</span>`;
-        btn.onclick = () => selectVignetteAnswer(idx, opt);
+        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs mono">${labels[oIdx]}</span> <span>${opt.text}</span>`;
+        btn.onclick = () => selectVignetteAnswer(idx);
         container.appendChild(btn);
       });
     }
 
     function selectVignetteAnswer(vIdx) {
-      const v = vignettes[vIdx];
+      const v = casesData[vIdx];
       const rationaleCard = document.getElementById('rationale-card');
       const rows = document.getElementById('rationale-rows');
       
@@ -483,16 +997,16 @@
     }
 
     function nextVignette() {
-      currentVignetteIdx = (currentVignetteIdx + 1) % vignettes.length;
+      currentVignetteIdx = (currentVignetteIdx + 1) % casesData.length;
       renderVignette(currentVignetteIdx);
     }
 
     function prevVignette() {
-      currentVignetteIdx = (currentVignetteIdx - 1 + vignettes.length) % vignettes.length;
+      currentVignetteIdx = (currentVignetteIdx - 1 + casesData.length) % casesData.length;
       renderVignette(currentVignetteIdx);
     }
 
-    // Auto-start game engine when page loads
+    // Auto-start engine when page loads
     window.onload = function() {
       loadGameQuestion();
     };
