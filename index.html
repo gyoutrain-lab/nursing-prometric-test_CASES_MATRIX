@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCFHS Emergency Triage & Protocol Simulator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-lg shadow-lg shadow-teal-500/20 font-bold text-white text-lg">
+          ✚
+        </div>
+        <div>
+          <h1 class="text-lg font-bold bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            SCFHS Triage & Protocol Master
+          </h1>
+          <p class="text-xs text-slate-400">Prometric Emergency Nursing Simulation Lab</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <button id="tab-game" onclick="switchTab('game')" class="px-4 py-2 rounded-lg bg-teal-600 text-white shadow-md flex items-center gap-2 transition-all">
+          🎮 Rapid Triage Game
+        </button>
+        <button id="tab-matrix" onclick="switchTab('matrix')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+          📊 Protocol Matrix
+        </button>
+        <button id="tab-vignette" onclick="switchTab('vignette')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+          📝 Board Vignettes
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+
+    <!-- ================= TAB 1: RAPID TRIAGE GAME ================= -->
+    <section id="view-game" class="space-y-6">
+      
+      <!-- GAME SCOREBOARD -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-3">
+          <div class="text-2xl">🏆</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Score</div>
+            <div id="game-score" class="text-2xl font-bold mono text-amber-400">0</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-3">
+          <div class="text-2xl">🔥</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Streak</div>
+            <div id="game-streak" class="text-2xl font-bold mono text-teal-400">0</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-3">
+          <div class="text-2xl">⏱️</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Time Left</div>
+            <div id="game-timer" class="text-2xl font-bold mono text-rose-400">15s</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-3">
+          <div class="text-2xl">🎯</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Accuracy</div>
+            <div id="game-accuracy" class="text-2xl font-bold mono text-cyan-400">100%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLINICAL CASE ARENA CARD -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-800 h-2 rounded-full mb-6 overflow-hidden">
+          <div id="timer-bar" class="bg-gradient-to-r from-teal-500 to-rose-500 h-full w-full transition-all duration-1000"></div>
+        </div>
+
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <span id="case-category" class="px-3 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold rounded-full uppercase tracking-wider">
+            ESI Level 1 - Emergent
+          </span>
+          <span id="case-counter" class="text-xs text-slate-400 mono">Case 1 of 3</span>
+        </div>
+
+        <div class="mb-6">
+          <h2 id="case-title" class="text-xl font-bold text-slate-100 mb-2">Anaphylactic Shock</h2>
+          <p id="case-vignette" class="text-slate-300 text-sm leading-relaxed bg-slate-950/80 p-4 rounded-xl border border-slate-800/80">
+            Loading clinical scenario...
+          </p>
+        </div>
+
+        <!-- Action Options -->
+        <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          <!-- Options rendered dynamically -->
+        </div>
+
+        <!-- Feedback Panel -->
+        <div id="game-feedback" class="hidden p-4 rounded-xl border text-sm font-medium transition-all mt-4"></div>
+      </div>
+
+      <!-- START / RESET CONTROL -->
+      <div class="flex justify-end">
+        <button onclick="resetGame()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl border border-slate-700 flex items-center gap-2 transition-all">
+          🔄 Restart Game Mode
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: PROTOCOL MATRIX ================= -->
+    <section id="view-matrix" class="hidden space-y-6">
+      
+      <!-- FILTER & SEARCH BAR -->
+      <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div class="relative w-full md:w-96">
+          <input type="text" id="matrix-search" oninput="filterMatrix()" placeholder="Search cases, drugs, or clinical keywords..." 
+                 class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-4 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500">
+        </div>
+
+        <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <button onclick="filterESI('ALL')" class="px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-semibold whitespace-nowrap">All ESI</button>
+          <button onclick="filterESI('ESI 1')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 1 (Emergent)</button>
+          <button onclick="filterESI('ESI 2')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 2 (Urgent)</button>
+          <button onclick="filterESI('ESI 3')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold whitespace-nowrap border border-slate-700">ESI 3 (Standard)</button>
+        </div>
+      </div>
+
+      <!-- PROTOCOL MATRIX TABLE -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 text-xs uppercase font-semibold">
+              <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Case & Urgency</th>
+                <th class="px-4 py-3">Nursing Action</th>
+                <th class="px-4 py-3">Medication & Route</th>
+                <th class="px-4 py-3">Dosage</th>
+                <th class="px-4 py-3">Time Rightness</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body" class="divide-y divide-slate-800/60">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 3: BOARD VIGNETTES ================= -->
+    <section id="view-vignette" class="hidden space-y-6">
+      
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold text-teal-400 uppercase tracking-wider">SCFHS Board-Style Practice Exam</span>
+          <span id="vignette-number" class="text-xs text-slate-400 mono">Question 1 of 2</span>
+        </div>
+
+        <h3 id="vignette-q-title" class="text-lg font-bold text-slate-100 mb-3">Anaphylactic Shock Management</h3>
+        <p id="vignette-q-text" class="text-sm text-slate-300 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-800 mb-6">
+          Loading scenario...
+        </p>
+
+        <!-- Vignette Options -->
+        <div id="vignette-options" class="space-y-3 mb-6"></div>
+
+        <!-- Rationale Matrix Card -->
+        <div id="rationale-card" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4">
+          <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+            📖 Prometric Rationale Matrix
+          </h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400">
+                  <th class="py-2 px-3">Option</th>
+                  <th class="py-2 px-3">Status</th>
+                  <th class="py-2 px-3">Clinical Justification</th>
+                </tr>
+              </thead>
+              <tbody id="rationale-rows" class="divide-y divide-slate-800/50"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Vignette Navigation -->
+        <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-800">
+          <button onclick="prevVignette()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-300">Previous</button>
+          <button onclick="nextVignette()" class="px-5 py-2 bg-teal-600 hover:bg-teal-500 text-xs font-semibold rounded-lg text-white shadow-lg shadow-teal-600/20">Next Vignette</button>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT DATA & ENGINE -->
+  <script>
+    // ================= DATA STORE =================
+    const protocols = [
+      { id: 1, case: "Anaphylactic Shock", esi: "ESI 1", action: "Maintain airway, non-rebreather O2 (10-15L), supine position with elevated legs.", drug: "Epinephrine (1:1,000)", dose: "0.3 - 0.5 mg IM", time: "STAT (Repeat q5-15m PRN)", rightness: "Anterolateral thigh IM immediately." },
+      { id: 2, case: "Acute STEMI", esi: "ESI 1", action: "12-lead ECG within 10 min, high-flow O2 if SpO2 <90%, PCI prep.", drug: "Chewable Aspirin + SL Nitroglycerin", dose: "Aspirin 160-325 mg PO / NTG 0.4 mg SL", time: "STAT at pain onset", rightness: "NTG q5m up to 3 doses max." },
+      { id: 3, case: "Severe Hypoglycemia", esi: "ESI 1", action: "Verify blood glucose <50 mg/dL, preserve airway, large bore IV.", drug: "Dextrose 50% in Water (D50W)", dose: "50 mL (25g) IV push", time: "STAT over 1-3 mins", rightness: "Recheck glucose in 15 minutes." },
+      { id: 4, case: "Status Epilepticus", esi: "ESI 1", action: "Airway preservation, side-lying position, suction ready, seizure precautions.", drug: "Lorazepam (Ativan)", dose: "4 mg IV slow push (2 mg/min)", time: "STAT over 2 mins", rightness: "May repeat once after 5-10 mins." },
+      { id: 5, case: "Hyperkalemia w/ EKG Changes", esi: "ESI 1", action: "Continuous ECG monitor, verify K+ >6.5 mEq/L, prepare hemodialysis.", drug: "Calcium Gluconate 10% + Regular Insulin", dose: "Calcium 10 mL IV / Insulin 10U with D50W", time: "STAT over 2-5 mins", rightness: "Calcium stabilizes membrane within 1-3 min." },
+      { id: 6, case: "Septic Shock", esi: "ESI 2", action: "Blood cultures prior to antibiotics, crystalloid 30 mL/kg, lactate measure.", drug: "Ceftriaxone (Broad-Spectrum)", dose: "1 - 2 g IV piggyback", time: "Within 1 Hour ('Golden Hour')", rightness: "Infuse over 30 mins after cultures." },
+      { id: 7, case: "Postpartum Hemorrhage", esi: "ESI 1", action: "Fundal massage, 2 large-bore IVs (16G), monitor vitals q5m, weigh pads.", drug: "Oxytocin (Syntocinon)", dose: "10-40 units in 1000 mL NS", time: "STAT continuous IV infusion", rightness: "Maintain rate until uterus contracts firm." },
+      { id: 8, case: "Deep Vein Thrombosis (DVT)", esi: "ESI 3", action: "Bed rest, elevate leg, no massage, monitor baseline aPTT/INR.", drug: "Unfractionated Heparin", dose: "80U/kg IV bolus -> 18U/kg/hr infusion", time: "STAT bolus, then continuous IV", rightness: "Adjust per aPTT protocol q6h." }
+    ];
+
+    const gameQuestions = [
+      {
+        title: "Anaphylactic Shock",
+        vignette: "A 28-year-old female presents with acute stridor, widespread urticaria, and a BP of 78/42 mmHg following a wasp sting.",
+        esi: "ESI Level 1 - Emergent",
+        options: [
+          { text: "Epinephrine 0.3mg IM (1:1,000) in thigh STAT", correct: true },
+          { text: "Diphenhydramine 25mg IV push STAT", correct: false },
+          { text: "Normal Saline 1000mL IV bolus over 1 hour", correct: false },
+          { text: "Albuterol 2.5mg nebulizer with oxygen", correct: false }
+        ],
+        explanation: "Epinephrine IM is the first-line drug for anaphylaxis to reverse airway obstruction and hypotension."
+      },
+      {
+        title: "Hyperkalemic Cardiac Toxicity",
+        vignette: "An ESRD patient has a potassium of 7.2 mEq/L with tall, peaked T-waves and widening QRS complexes on the monitor.",
+        esi: "ESI Level 1 - Emergent",
+        options: [
+          { text: "Calcium Gluconate 10% IV slow push STAT", correct: true },
+          { text: "Regular Insulin 10 units IV push STAT", correct: false },
+          { text: "Sodium Polystyrene (Kayexalate) 30g PO", correct: false },
+          { text: "Nebulized Albuterol 10mg over 15 mins", correct: false }
+        ],
+        explanation: "Calcium Gluconate immediately stabilizes the myocardial cell membrane to prevent lethal dysrhythmias."
+      },
+      {
+        title: "Unconscious Hypoglycemia",
+        vignette: "A diabetic patient is found unresponsive with a bedside glucose of 36 mg/dL. Peripheral IV is intact.",
+        esi: "ESI Level 1 - Emergent",
+        options: [
+          { text: "Dextrose 50% in Water (D50W) 50mL IV push", correct: true },
+          { text: "Oral Glucose Gel 15g between cheek and gums", correct: false },
+          { text: "Glucagon 1mg Subcutaneously", correct: false },
+          { text: "Recheck blood glucose with central laboratory sample", correct: false }
+        ],
+        explanation: "IV D50W is the fastest and safest route for severe hypoglycemia when IV access is present."
+      }
+    ];
+
+    const vignettes = [
+      {
+        title: "Question 1: Anaphylactic Shock Priority",
+        text: "A 28-year-old female is brought to the ED after a bee sting. Assessment reveals severe stridor, widespread urticaria, and BP 78/42 mmHg. Which action must be executed FIRST?",
+        options: [
+          { label: "A", text: "Administer Diphenhydramine 25mg IV push", correct: false },
+          { label: "B", text: "Administer Epinephrine 0.3mg (1:1,000) IM in anterolateral thigh", correct: true },
+          { label: "C", text: "Start Normal Saline 1000mL bolus over 30 mins", correct: false },
+          { label: "D", text: "Nebulize Albuterol 2.5mg with oxygen", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "Incorrect", text: "Diphenhydramine is 2nd-line adjunctive H1-blocker. Does not reverse laryngeal edema." },
+          { opt: "B", status: "CORRECT", text: "Epinephrine IM is 1st-line. Vasoconstricts, bronchodilates, and increases cardiac output." },
+          { opt: "C", status: "Incorrect", text: "Fluid resuscitation is secondary to Epinephrine administration." },
+          { opt: "D", status: "Incorrect", text: "Treats bronchospasm but does not reverse upper airway angioedema or systemic shock." }
+        ]
+      },
+      {
+        title: "Question 2: STEMI Reperfusion Window",
+        text: "A 54-year-old male presents with crushing substernal chest pain for 45 minutes with diaphoresis. Which action is the HIGHEST PRIORITY?",
+        options: [
+          { label: "A", text: "Obtain a 12-lead ECG within 10 minutes", correct: true },
+          { label: "B", text: "Administer Morphine 2mg IV push", correct: false },
+          { label: "C", text: "Administer Sublingual Nitroglycerin 0.4mg", correct: false },
+          { label: "D", text: "Draw blood for Troponin I and T", correct: false }
+        ],
+        rationale: [
+          { opt: "A", status: "CORRECT", text: "12-lead ECG within 10 minutes confirms STEMI to activate door-to-balloon PCI protocol." },
+          { opt: "B", status: "Incorrect", text: "Morphine is reserved for pain refractory to nitrates." },
+          { opt: "C", status: "Incorrect", text: "Must confirm ECG first to rule out right ventricular infarction." },
+          { opt: "D", status: "Incorrect", text: "Troponin takes hours to elevate; must not delay ECG interpretation." }
+        ]
+      }
+    ];
+
+    // ================= STATE ENGINE =================
+    let gameState = { score: 0, streak: 0, index: 0, timer: null, timeLeft: 15, totalAnswered: 0, correctCount: 0 };
+    let currentVignetteIdx = 0;
+
+    // ================= TAB NAVIGATION =================
+    function switchTab(tab) {
+      ['game', 'matrix', 'vignette'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition-all";
+      });
+
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).className = "px-4 py-2 rounded-lg bg-teal-600 text-white shadow-md flex items-center gap-2 transition-all";
+
+      if (tab === 'matrix') renderMatrix(protocols);
+      if (tab === 'vignette') renderVignette(currentVignetteIdx);
+      if (tab === 'game') loadGameQuestion();
+    }
+
+    // ================= GAME ENGINE =================
+    function loadGameQuestion() {
+      clearInterval(gameState.timer);
+      const q = gameQuestions[gameState.index];
+      
+      document.getElementById('case-title').innerText = q.title;
+      document.getElementById('case-vignette').innerText = q.vignette;
+      document.getElementById('case-category').innerText = q.esi;
+      document.getElementById('case-counter').innerText = `Case ${gameState.index + 1} of ${gameQuestions.length}`;
+      document.getElementById('game-feedback').classList.add('hidden');
+
+      const grid = document.getElementById('options-grid');
+      grid.innerHTML = '';
+
+      q.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-teal-500 hover:bg-slate-800/80 transition-all text-sm font-medium flex items-center justify-between";
+        btn.innerHTML = `<span>${opt.text}</span> <span class="text-slate-500">➔</span>`;
+        btn.onclick = () => answerGame(opt.correct);
+        grid.appendChild(btn);
+      });
+
+      // Reset Timer
+      gameState.timeLeft = 15;
+      updateTimerUI();
+      gameState.timer = setInterval(() => {
+        gameState.timeLeft--;
+        updateTimerUI();
+        if (gameState.timeLeft <= 0) {
+          clearInterval(gameState.timer);
+          answerGame(false, true);
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('game-timer').innerText = `${gameState.timeLeft}s`;
+      const pct = (gameState.timeLeft / 15) * 100;
+      document.getElementById('timer-bar').style.width = `${pct}%`;
+    }
+
+    function answerGame(isCorrect, isTimeout = false) {
+      clearInterval(gameState.timer);
+      gameState.totalAnswered++;
+
+      const feedback = document.getElementById('game-feedback');
+      feedback.classList.remove('hidden');
+
+      if (isCorrect) {
+        gameState.correctCount++;
+        gameState.score += 100 + (gameState.timeLeft * 10);
+        gameState.streak++;
+        feedback.className = "p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm font-medium";
+        feedback.innerHTML = `<div class="font-bold mb-1">✔ Correct Action!</div>${gameQuestions[gameState.index].explanation}`;
+      } else {
+        gameState.streak = 0;
+        feedback.className = "p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 text-sm font-medium";
+        feedback.innerHTML = `<div class="font-bold mb-1">✖ ${isTimeout ? 'Time Expired!' : 'Incorrect Choice'}</div>${gameQuestions[gameState.index].explanation}`;
+      }
+
+      // Update Scoreboard
+      document.getElementById('game-score').innerText = gameState.score;
+      document.getElementById('game-streak').innerText = gameState.streak;
+      document.getElementById('game-accuracy').innerText = `${Math.round((gameState.correctCount / gameState.totalAnswered) * 100)}%`;
+
+      // Next Case Delayed Transition
+      setTimeout(() => {
+        gameState.index = (gameState.index + 1) % gameQuestions.length;
+        loadGameQuestion();
+      }, 2500);
+    }
+
+    function resetGame() {
+      gameState = { score: 0, streak: 0, index: 0, timer: null, timeLeft: 15, totalAnswered: 0, correctCount: 0 };
+      document.getElementById('game-score').innerText = '0';
+      document.getElementById('game-streak').innerText = '0';
+      document.getElementById('game-accuracy').innerText = '100%';
+      loadGameQuestion();
+    }
+
+    // ================= PROTOCOL MATRIX ENGINE =================
+    function renderMatrix(data) {
+      const tbody = document.getElementById('matrix-table-body');
+      tbody.innerHTML = '';
+
+      data.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-semibold text-slate-400 mono">${p.id}</td>
+          <td class="px-4 py-3">
+            <div class="font-bold text-slate-100">${p.case}</div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${p.esi === 'ESI 1' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">${p.esi}</span>
+          </td>
+          <td class="px-4 py-3 text-slate-300 max-w-xs">${p.action}</td>
+          <td class="px-4 py-3 font-medium text-teal-300">${p.drug}</td>
+          <td class="px-4 py-3 text-slate-300 mono">${p.dose}</td>
+          <td class="px-4 py-3">
+            <div class="font-bold text-amber-400 text-xs">${p.time}</div>
+            <div class="text-[11px] text-slate-400">${p.rightness}</div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterMatrix() {
+      const query = document.getElementById('matrix-search').value.toLowerCase();
+      const filtered = protocols.filter(p => 
+        p.case.toLowerCase().includes(query) ||
+        p.drug.toLowerCase().includes(query) ||
+        p.action.toLowerCase().includes(query)
+      );
+      renderMatrix(filtered);
+    }
+
+    function filterESI(esi) {
+      if (esi === 'ALL') return renderMatrix(protocols);
+      const filtered = protocols.filter(p => p.esi.startsWith(esi));
+      renderMatrix(filtered);
+    }
+
+    // ================= BOARD VIGNETTE ENGINE =================
+    function renderVignette(idx) {
+      const v = vignettes[idx];
+      document.getElementById('vignette-number').innerText = `Question ${idx + 1} of ${vignettes.length}`;
+      document.getElementById('vignette-q-title').innerText = v.title;
+      document.getElementById('vignette-q-text').innerText = v.text;
+      document.getElementById('rationale-card').classList.add('hidden');
+
+      const container = document.getElementById('vignette-options');
+      container.innerHTML = '';
+
+      v.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-teal-500 transition-all text-sm font-medium flex items-center gap-3";
+        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs mono">${opt.label}</span> <span>${opt.text}</span>`;
+        btn.onclick = () => selectVignetteAnswer(idx, opt);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectVignetteAnswer(vIdx) {
+      const v = vignettes[vIdx];
+      const rationaleCard = document.getElementById('rationale-card');
+      const rows = document.getElementById('rationale-rows');
+      
+      rationaleCard.classList.remove('hidden');
+      rows.innerHTML = '';
+
+      v.rationale.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-800/40";
+        tr.innerHTML = `
+          <td class="py-2 px-3 font-bold mono text-slate-300">${r.opt}</td>
+          <td class="py-2 px-3 font-bold ${r.status === 'CORRECT' ? 'text-emerald-400' : 'text-rose-400'}">${r.status}</td>
+          <td class="py-2 px-3 text-slate-300">${r.text}</td>
+        `;
+        rows.appendChild(tr);
+      });
+    }
+
+    function nextVignette() {
+      currentVignetteIdx = (currentVignetteIdx + 1) % vignettes.length;
+      renderVignette(currentVignetteIdx);
+    }
+
+    function prevVignette() {
+      currentVignetteIdx = (currentVignetteIdx - 1 + vignettes.length) % vignettes.length;
+      renderVignette(currentVignetteIdx);
+    }
+
+    // Auto-start game engine when page loads
+    window.onload = function() {
+      loadGameQuestion();
+    };
+  </script>
+</body>
+</html>
